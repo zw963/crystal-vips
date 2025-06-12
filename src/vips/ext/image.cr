@@ -26,6 +26,16 @@ module Vips
       self.call("abs").as(Type).as_image
     end
 
+    def self.text(text : String, **kwargs)
+      options = Optional.new(**kwargs)
+      options["autofit_dpi"] = true
+      results = Operation.call("text", options, text).as(Array(Type))
+      final_result = results.first.as(Type).as_image
+      opts = results[1]?.try &.as_h
+      autofit_dpi = ((o = opts) && (val = o["autofit_dpi"]?)) ? val.as_i32 : nil
+      {final_result, autofit_dpi}
+    end
+
     # Add two images
     #
     # ```
